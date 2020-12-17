@@ -1,0 +1,205 @@
+{
+    "_version": "1.28.0",
+    "sap.app": {
+        "id": "sap.fe.demo.incidents",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "1.0.0"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "dataSources": {
+            "mainService": {
+                "uri": "/incident/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "4.0"
+                }
+            }
+        },
+        "offline": false,
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "ui5template.fiorielements.v4.lrop",
+            "version": "1.0.0"
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "resources": {
+            "js": [],
+            "css": []
+        },
+        "dependencies": {
+            "minUI5Version": "1.76.0",
+            "libs": {
+                "sap.ui.core": {},
+                "sap.fe.templates": {},
+                "sap.f": {}
+            }
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            }
+        },
+        "routing": {
+            "routes": [
+                {
+                    "pattern": ":?query:",
+                    "name": "IncidentsList",
+                    "target": [
+                        "IncidentsList"
+                    ]
+                },
+                {
+                    "pattern": "Incidents({key}):?query:",
+                    "name": "IncidentsObjectPage",
+                    "target": [
+                        "IncidentsList",
+                        "IncidentsObjectPage"
+                    ]
+                },
+                {
+                    "pattern": "Incidents({key})/incidentFlow({key2}):?query:",
+                    "name": "ProcessFlowViewPage_incidentFlow",
+                    "target": [
+                        "IncidentsList",
+                        "IncidentsObjectPage",
+                        "ProcessFlowViewPage_incidentFlow"
+                    ]
+                }
+            ],
+            "targets": {
+                "IncidentsList": {
+                    "type": "Component",
+                    "id": "IncidentsList",
+                    "name": "sap.fe.templates.ListReport",
+                    "options": {
+                        "settings": {
+                            "entitySet": "Incidents",
+                            "variantManagement": "Page",
+                            "navigation": {
+                                "Incidents": {
+                                    "detail": {
+                                        "route": "IncidentsObjectPage"
+                                    }
+                                }
+                            },
+                            "initialLoad": true,
+                            "controlConfiguration": {
+                                "@com.sap.vocabularies.UI.v1.LineItem": {}
+                            }
+                        }
+                    },
+                    "controlAggregation": "beginColumnPages",
+                    "contextPattern": ""
+                },
+                "IncidentsObjectPage": {
+                    "type": "Component",
+                    "id": "IncidentsObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "Incidents",
+                            "navigation": {
+                                "incidentFlow": {
+                                    "detail": {
+                                        "route": "ProcessFlowViewPage_incidentFlow"
+                                    }
+                                }
+                            },
+                            "editableHeaderContent": false,
+                            "content": {
+                                "body": {
+                                    "sections": {
+                                        "CustomSectionGantt": {
+                                            "name": "sap.fe.demo.incidents.ext.fragment.CustomSectionGantt",
+                                            "position": {
+                                                "anchor": "IncidentOverviewFacet",
+                                                "placement": "After"
+                                            },
+                                            "type": "XMLFragment",
+                                            "title": "{i18n>MaxProcessingTime}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "controlAggregation": "midColumnPages",
+                    "contextPattern": "/Incidents({key})"
+                },
+                "ProcessFlowViewPage_incidentFlow": {
+                    "viewId": "ProcessFlowView",
+                    "viewName": "sap.fe.demo.incidents.ext.view.ProcessFlow",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IncidentFlow",
+                            "navigation": {}
+                        }
+                    },
+                    "controlAggregation": "endColumnPages",
+                    "contextPattern": "/Incidents({key})/incidentFlow({key2})"
+                }
+            },
+            "config": {
+                "flexibleColumnLayout": {
+                    "defaultTwoColumnLayoutType": "TwoColumnsMidExpanded",
+                    "defaultThreeColumnLayoutType": "ThreeColumnsEndExpanded"
+                },
+                "routerClass": "sap.f.routing.Router"
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "rootView": {
+            "viewName": "sap.fe.templates.RootContainer.view.Fcl",
+            "type": "XML",
+            "async": true,
+            "id": "appRootView"
+        }
+    },
+    "sap.platform.abap": {
+        "_version": "1.1.0",
+        "uri": ""
+    },
+    "sap.platform.hcp": {
+        "_version": "1.1.0",
+        "uri": ""
+    },
+    "sap.fiori": {
+        "_version": "1.1.0",
+        "registrationIds": [],
+        "archeType": "transactional"
+    }
+}
