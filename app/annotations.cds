@@ -62,12 +62,17 @@ annotate service.Incidents with @(UI : {
     },
 
     //Facets for additional object header information (shown in the Object Page header)
-    HeaderFacets                         : [{
+    HeaderFacets                         : [
+    {
         $Type  : 'UI.ReferenceFacet',
         Target : '@UI.FieldGroup#HeaderGeneralInformation'
     },
     //begin of header facet enhancement
-
+    {
+        $Type  : 'UI.ReferenceFacet',
+        Label  : '{i18n>AssignedContact}',
+        Target : 'assignedIndividual/@Communication.Contact',
+    }
     //end of header facet enhancement
     ],
 
@@ -91,7 +96,7 @@ annotate service.Incidents with @(UI : {
     ]},
 
     FieldGroup #GeneralInformation       : {Data : [
-        {
+    {
         $Type : 'UI.DataField',
         Value : identifier,
     },
@@ -110,7 +115,20 @@ annotate service.Incidents with @(UI : {
     ]},
 
     //begin of field group enhancement
+    FieldGroup #Admin                    : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [
+        {
+            $Type : 'UI.DataField',
+            Value : createdAt,
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : createdBy,
+        },
+        ]
 
+    },
     //end of field group enhancement
 
     //Object Page content area is organized by facets referring to e.g. fieldgroup and lineItem annotations
@@ -134,8 +152,13 @@ annotate service.Incidents with @(UI : {
                 Target : '@UI.FieldGroup#IncidentDetails'
             },
 
-        //begin of reference facet enhancement
-
+            //begin of reference facet enhancement
+            {
+                $Type  : 'UI.ReferenceFacet',
+                Target : '@UI.FieldGroup#Admin',
+                Label  : '{i18n>AdminData}',
+                ID     : 'AdminDataFacet',
+            },
         //end of reference facet enhancement
         ]
     },
@@ -155,7 +178,11 @@ annotate service.Incidents with @(UI : {
 annotate service.IncidentFlow with @(UI : {LineItem : [
 
 //begin of column enhancement
-
+{
+    $Type       : 'UI.DataField',
+    Value       : stepStatus,
+    Criticality : criticality,
+},
 //end of column enhancement
 {
     $Type : 'UI.DataField',

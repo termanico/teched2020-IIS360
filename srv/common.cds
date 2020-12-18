@@ -1,9 +1,7 @@
 namespace scp.cloud;
-using IncidentService as service from './incidentservice';
 
-using {
-    cuid
-} from '@sap/cds/common';
+using IncidentService as service from './incidentservice';
+using {cuid} from '@sap/cds/common';
 
 annotate cuid with {
     ID @(
@@ -15,9 +13,9 @@ annotate cuid with {
 
 
 annotate service.Incidents with {
-    ID @UI.Hidden: true;
+    ID                 @UI.Hidden : true;
     assignedIndividual @UI.Hidden : true;
-    identifier @(Common.FieldControl: identifierFieldControl);
+    identifier         @(Common.FieldControl : identifierFieldControl);
 };
 
 annotate service.Incidents with {
@@ -26,12 +24,12 @@ annotate service.Incidents with {
         TextArrangement : #TextOnly,
         ValueListWithFixedValues
     };
-  category @Common : {
+    category       @Common : {
         Text            : category.name,
         TextArrangement : #TextOnly,
         ValueListWithFixedValues
     };
-  priority @Common : {
+    priority       @Common : {
         Text            : priority.name,
         TextArrangement : #TextOnly,
         ValueListWithFixedValues
@@ -60,3 +58,14 @@ annotate service.IncidentStatus with {
 };
 
 //add contact card annotation
+annotate service.Individual with @(Communication.Contact : {
+    fn  : businessPartner.BusinessPartnerFullName,
+    adr : [{
+        type     : #work,
+        code     : businessPartnerAddress.PostalCode,
+        street   : businessPartnerAddress.StreetName,
+        building : businessPartnerAddress.HouseNumber,
+        country  : businessPartnerAddress.Country,
+        locality : businessPartnerAddress.CityName
+    }]
+});

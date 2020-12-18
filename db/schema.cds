@@ -1,6 +1,7 @@
 namespace scp.cloud;
-//begin add using statement
 
+//begin add using statement
+using {API_BUSINESS_PARTNER as external} from '../srv/external/API_BUSINESS_PARTNER.csn';
 //end add using statement
 
 using {
@@ -12,40 +13,42 @@ using {
 type Url : String;
 
 type TechnicalBooleanFlag : Boolean @(
-    UI.Hidden,
-    Core.Computed
+  UI.Hidden,
+  Core.Computed
 );
 
 type TechnicalFieldControlFlag : Integer @(
-    UI.Hidden,
-    Core.Computed
+  UI.Hidden,
+  Core.Computed
 );
 
 type Criticality : Integer @(
-    UI.Hidden,
-    Core.Computed
+  UI.Hidden,
+  Core.Computed
 );
 
 type Identifier : String(100)@(title : 'Identifier');
+
 @cds.autoexpose
 abstract entity identified : cuid {
-    identifier : Identifier not null;
+  identifier : Identifier not null;
 }
 
 //Bolded display of first table column values can be achieved by defining annotations Common.SemanticKey and
 //Common.TextArrangement for the entities key and referring to a 'human-readable' identifier to be displayed instead.
 
 annotate identified with @(
-    Common.SemanticKey : [identifier],
-    UI.Identification  : [{Value : identifier}]
+  Common.SemanticKey : [identifier],
+  UI.Identification  : [{Value : identifier}]
 ) {
 
-    ID         @Common : {
-        Text            : identifier,
-        TextArrangement : #TextOnly
+  ID @Common : {
+    Text            : identifier,
+    TextArrangement : #TextOnly
 
-    };
+  };
 }
+
 entity Incidents : managed, identified {
   title                   : String(50)                        @title : '{i18n>Title}';
   category                : Association to one Category       @title : '{i18n>Category}';
@@ -62,31 +65,32 @@ entity Incidents : managed, identified {
 }
 
 entity IncidentFlow : managed {
-  key id             : UUID;
-      processStep    : String(30)@title : '{i18n>ProcessStep}';
-      stepStatus     : String(10)@title : '{i18n>ProcessStepStatus}';
-      criticality    : Integer;
-      stepStartDate  : Date      @title : '{i18n>StepStartDate}';
-      stepEndDate    : Date      @title : '{i18n>StepEndDate}';
-      @assert.integrity :                 false
+  key id            : UUID;
+      processStep   : String(30)@title : '{i18n>ProcessStep}';
+      stepStatus    : String(10)@title : '{i18n>ProcessStepStatus}';
+      criticality   : Integer;
+      stepStartDate : Date      @title : '{i18n>StepStartDate}';
+      stepEndDate   : Date      @title : '{i18n>StepEndDate}';
+      @assert.integrity :                false
       incident      : Association to Incidents;
 }
 
 entity IncidentProcessTimeline : managed {
-  key id             : UUID;
-      text           : String;
-      type           : String;
-      startTime      : DateTime;
-      endTime        : DateTime;
+  key id        : UUID;
+      text      : String;
+      type      : String;
+      startTime : DateTime;
+      endTime   : DateTime;
       @assert.integrity : false
       incident  : Association to Incidents;
 }
 
 entity Individual : managed {
   key id                : UUID;
-//Begin add additional properties
-
-//End add additional properties
+      //Begin add additional properties
+      businessPartnerID : String;
+      addressID         : String;
+      //End add additional properties
       @assert.integrity : false
       Incidents         : Association to many Incidents
                             on Incidents.assignedIndividual = $self;
@@ -105,3 +109,10 @@ entity Priority : IncidentsCodeList {
 entity IncidentStatus : IncidentsCodeList {}
 
 //add associations to external entities
+extend scp.cloud.Individual with {
+  businessPartner        : Association to one external.A_BusinessPartner
+                             on businessPartner.BusinessPartner = businessPartnerID;
+  businessPartnerAddress : Association to one external.A_BusinessPartnerAddress
+                             on  businessPartnerAddress.BusinessPartner = businessPartnerID
+                             and businessPartnerAddress.AddressID       = addressID;
+}
