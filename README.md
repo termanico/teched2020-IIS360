@@ -1,4 +1,4 @@
-# IIS360 - Simplify Development of SAP Fiori Apps with OData V44
+# IIS360 - Simplify Development of SAP Fiori Apps with OData V4
 
 ## Description
 
